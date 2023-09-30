@@ -8,7 +8,7 @@ Whenever possible, it uses the same notation and refers to the equation numbers 
 Note: The results published in the paper were not created by this code but by a prototype in Matlab. Hence, **small** differences in the computed errors and residuals can occur when compared with the figures in the paper. 
 Also, the shock-capturing approach described in the paper has not yet been included in the Gridap implementation.
 
-I closely followed the Gridap tutorials at github.com/gridap/Tutorials to implement this application. They are great if you want to get started using Gridap.
+I closely followed the Gridap tutorials at [github.com/gridap/Tutorials](https://github.com/gridap/Tutorials) to implement this application. They are great if you want to get started using Gridap.
 
 ## content
 The module consists of only one file: 
