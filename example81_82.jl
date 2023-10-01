@@ -9,7 +9,7 @@ using Plots                     # for plotting results
 
 # example number as in paper, Section 8.1 or 8.2
 # (example 8.3 is in a different file)
-exampleNo = 2
+exampleNo = 1
 
 # read manufactured solution and corresponding body load 
 include("loadExamples1and2.jl")
@@ -30,10 +30,11 @@ paramProblem = Dict(
     :xₐ => π,
     :u̅ => 0.98,                 # parameter in regularization, Eq. (3)
     :u => u,                    # analytical solution 
-    :ub => x -> 0.0,              # boundary condition, function of x
+    :ub => x -> 0.0,            # boundary condition, function of x
     :f => f,                    # body load as read from file 
-    :u₀ => x -> 1.0,              # initial guess, function of x
-    :isNL => true               # whether problem is nonlinear 
+    :u₀ => x -> 1.0,            # initial guess, function of x
+    :isNL => true,              # whether problem is nonlinear 
+    :γ => 5                     # slenderness ratio (only used in linear problem)
 )
 
 # solver parameters

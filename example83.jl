@@ -25,7 +25,8 @@ paramProblem = Dict(
     :ub => x -> 0.0,            # boundary condition, function of x
     :f => x -> 0.0,             # body load as read from file 
     :u₀ => x -> 1.0,            # initial guess, function of x
-    :isNL => true               # whether problem is nonlinear 
+    :isNL => true,              # whether problem is nonlinear 
+    :γ => 5                     # slenderness ratio (only used in linear problem)
 )
 
 # solver parameters

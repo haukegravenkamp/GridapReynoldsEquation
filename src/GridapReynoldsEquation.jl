@@ -5,7 +5,8 @@ using LineSearches: BackTracking
 using Plots
 
 # TODO: shock capturing
-# TODO: linear problem as in old paper
+# TODO: defaults for optional arguments
+# TODO: test higher-order elements
 
 ## DOMAIN
 function domainDefinition(nx, ny, resultFolder)
@@ -63,22 +64,25 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   stabilizationType = paramProblem[:stabilizationType]
   f = paramProblem[:f]
   u₀ = paramProblem[:u₀]
+  γ = paramProblem[:γ]
 
   # read solver parameters
-  numIt = paramSolver[:numIt]
-  linType = paramSolver[:linType]
-  initialPicard = paramSolver[:initialPicard]
-  backTracking = paramSolver[:backTracking]
-  # in case of Picard, we make sure backTracking is disabled
-  if linType == 0
-    backTracking = false
-  end
-  # set a local flag for Picard iteration
-  # used when switching automatically from Picard to Newton
-  if linType == 0
-    Picard = true
-  else
-    Picard = false
+  if isNL
+    numIt = paramSolver[:numIt]
+    linType = paramSolver[:linType]
+    initialPicard = paramSolver[:initialPicard]
+    backTracking = paramSolver[:backTracking]
+    # in case of Picard, we make sure backTracking is disabled
+    if linType == 0
+      backTracking = false
+    end
+    # set a local flag for Picard iteration
+    # used when switching automatically from Picard to Newton
+    if linType == 0
+      Picard = true
+    else
+      Picard = false
+    end
   end
 
   ## FUNCTIONS DEFINING PHYSICAL PROBLEM 
@@ -96,9 +100,10 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   # right-hand side
   f̂(x) = f(x) - Hₓ(x)
 
-  # shorthand for x-derivative 
+  # shorthand for x- and y-derivative 
   # (as only the gradient of an FE function is defined in Gridap, I think)
   dx(∇u) = [1, 0] ⋅ ∇u
+  dy(∇u) = [0, 1] ⋅ ∇u
 
   # helper function phi = g*u, Eq. (7)
   ϕ(u) = g(u) * u
@@ -117,8 +122,8 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   dax(u, H) = dg(u) ⋅ H
   ddax(u, H) = ddg(u) ⋅ H
   # diffusivity, above Eq. (9)
-  k(u, H) = H ⋅ H ⋅ H ⋅ dϕ(u) / 12.0
-  dk(u, H) = H ⋅ H ⋅ H ⋅ ddϕ(u) / 12.0
+  k(u, H) = H^3 ⋅ dϕ(u) / 12.0
+  dk(u, H) = H^3 ⋅ ddϕ(u) / 12.0
   # reaction, above Eq. (9)
   s(u, ∇u, H, Hₓ) = dg(u) ⋅ dx(∇u) ⋅ H + (g(u) - 1) ⋅ Hₓ
 
@@ -166,15 +171,10 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   M((u, ξ), (v, η)) = ∫(η ⋅ ξ)dΩ
   dMₚ((u, ξ), (du, dξ), (v, η)) = ∫(η ⋅ dξ)dΩ
 
-  # linear version (just for debugging)
-  # convection
-  C(u, v, ::Val{false}) = ∫(v ⋅ u ⋅ H)dΩ
-
+  # linear version
   # diffusion
-  D(u, v, ::Val{false}) = ∫((∇(v) ⋅ ∇(u)) ⋅ H ⋅ H ⋅ H)dΩ
-
-  # reaction
-  R(u, v, ::Val{false}) = ∫(v ⋅ u ⋅ Hₓ + v ⋅ u ⋅ H)dΩ
+  kₗ(H) = H^3
+  Dₗ(u, v) = ∫((dx ∘ ∇(v)) ⋅ (dx ∘ ∇(u)) ⋅ (kₗ ∘ (H)) + (dy ∘ ∇(v)) ⋅ (dy ∘ ∇(u)) ⋅ (kₗ ∘ (H)) / 4 / (γ^2))dΩ
 
   # left-hand side, Galerkin terms
   function B(u, v)
@@ -182,7 +182,7 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
     if isNL
       Bt = C(u, v) + D(u, v) + R(u, v)
     else
-      Bt = C(u, v, Val(isNL)) + D(u, v, Val(isNL)) + R(u, v, Val(isNL))
+      Bt = Dₗ(u, v)
     end
     # add artificial diffusion if requested
     if artDiff
@@ -309,6 +309,8 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
     # linear operator
     op = AffineFEOperator(B, L, U, V)
     uₕ = solve(op)
+    solverCache = []
+    residualNorms = []
 
   end
 
