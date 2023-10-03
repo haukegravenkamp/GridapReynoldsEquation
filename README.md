@@ -18,7 +18,7 @@ The other files are related to the specific numerical examples as presented in t
 
 - 'example*.jl' are the input files and main scripts to run in order to reproduce the examples
 - 'manufacturedSolutionsMatlab' contains the functions defining body loads. They have been computed using the Matlab program *Manufactured solutions* [3]
-- 'results' contains the 'state' files for plotting the results in paraview (optional).
+- 'results' contains the 'state' files for plotting the results in Paraview (optional).
 
 ## prerequisites
 - Julia
@@ -32,16 +32,21 @@ Provided you have Julia installed, you should be able to simply download this re
 Details for those new to Julia:
 - download or clone this repository
 - open a terminal in the main folder GridapReynoldsEquation and start Julia
-- start the package manager by typing: ]
-- type: instantiate
+- start the package manager by typing: `]`
+- activate the project by typing: `activate .`
+- install/update dependencies by typing: `instantiate`
 - wait while Julia installs all missing packages (may take a while)
-- run one of the example* files
+- run one of the example* files (in Terminal e.g. `include("example81_82.jl")`)
+
+Instead of using the terminal for everything, you may want to use an environment such as VScode with the Julia extension, allowing you to run the example with a click.
 
 Running the code for the first time takes significantly longer due to compilation, which is normal behavior in Julia. The second time takes about 20 seconds on my desktop computer to run the complete convergence test for examples 1 or 2.  
 
 **plotting results**
 The meshes and results are written in .vtu format in the subfolders of the 'results' folder. They can easily be plotted using Paraview. If you like, you can use the "state" files (.pvsm) provided in the results folder. 
 Load them using File->load state, choose 'Search files under specified directory', and make sure to select the directory containing the corresponding .vtu files.
+
+**note:** The folders for writing the results are not created automatically; they must already exist.
 
 ## references  
 [1] Gravenkamp, H., Pfeil, S., Codina, R., Stabilized finite elements for the solution of the Reynolds equation considering cavitation, Computer Methods in Applied Mechanics and Engineering (2023)
