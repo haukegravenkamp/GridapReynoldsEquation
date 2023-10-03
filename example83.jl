@@ -40,7 +40,7 @@ paramSolver = Dict(
 # solve problem using Reynolds module
 uh, dΩ, hMin, h, solverCache, residuals = runReynolds(paramProblem, paramSolver, resultFolder);
 # plot residual 
-plotResiduals(residuals, paramProblem[:order])
+display(plotResiduals(residuals, paramProblem[:order]))
 
 
 

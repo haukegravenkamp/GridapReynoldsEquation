@@ -49,9 +49,10 @@ paramSolver = Dict(
 if runConvergence       # perform convergence test
     el2, h, nEle, t, solverCache, residuals = convTest(paramProblem, paramSolver, resultFolder)
     # plot residual of finest mesh
-    plotResiduals(residuals[end], paramProblem[:order])
+    pR = plotResiduals(residuals[end], paramProblem[:order])
     # plot errors for all meshes
-    plotErrors(h, el2, paramProblem[:order])
+    pE = plotErrors(h, el2, paramProblem[:order])
+    display(plot(pR,pE,layout=(2,1)))
     # compute slope of convergence graph
     if length(h) > 1
         sl = slope(h[end-1:end], el2[end-1:end])
@@ -61,7 +62,8 @@ if runConvergence       # perform convergence test
 else                    # only compute base mesh
     uₕ, dΩ, hMin, h, solverCache, residuals = runReynolds(paramProblem, paramSolver, resultFolder)
     # plot residual 
-    plotResiduals(residuals, paramProblem[:order])
+    pR = plotResiduals(residuals, paramProblem[:order])
+    display(plot(pR))
     # compute error
     el2 = computeError(u, uₕ, dΩ)
     println("L2 error: ", el2)

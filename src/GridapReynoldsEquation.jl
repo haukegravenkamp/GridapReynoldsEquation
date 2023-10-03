@@ -399,7 +399,8 @@ end
 # simple function for plotting errors of convergence study 
 function plotErrors(h, errors, k)
 
-  display(plot(h, errors, xaxis=:log, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="h", ylabel="error norm"))
+  p = plot(h, errors, xaxis=:log, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="h", ylabel="error norm")
+  return p
 
 end
 
@@ -407,7 +408,8 @@ end
 function plotResiduals(residuals, k)
 
   nCalls = length(residuals)
-  display(plot(0:(nCalls-1), residuals, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="iteration", ylabel="residual norm"))
+  p = plot(0:(nCalls-1), residuals, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="iteration", ylabel="residual norm")
+  return p
 end
 
 end
