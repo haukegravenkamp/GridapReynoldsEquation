@@ -49,10 +49,10 @@ paramSolver = Dict(
 if runConvergence       # perform convergence test
     el2, h, nEle, t, solverCache, residuals = convTest(paramProblem, paramSolver, resultFolder)
     # plot residual of finest mesh
-    pR = plotResiduals(residuals[end], paramProblem[:order])
+    pR = plotResiduals(residuals[end])
     # plot errors for all meshes
-    pE = plotErrors(h, el2, paramProblem[:order])
-    display(plot(pR,pE,layout=(2,1)))
+    pE = plotErrors(h, el2)
+    display(plot(pR,pE,layout=(2,1),size=(600,600/1.618*2)))
     # compute slope of convergence graph
     if length(h) > 1
         sl = slope(h[end-1:end], el2[end-1:end])

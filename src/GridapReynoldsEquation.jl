@@ -402,18 +402,18 @@ function convTest(paramProblem, paramSolver, resultFolder)
 end
 
 # simple function for plotting errors of convergence study 
-function plotErrors(h, errors, k)
+function plotErrors(h, errors)
 
-  p = plot(h, errors, xaxis=:log, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="h", ylabel="error norm")
+  p = plot(h, errors, xaxis=:log, yaxis=:log, label="", xlabel="h", ylabel="error norm", linecolor=:black, marker=(:circle, 4, :white, stroke(1.5, :black)), fontfamily="Computer Modern", linewidth=1, framestyle=:box, grid=false )
   return p
 
 end
 
 # plotting residuals of result k if there are several
-function plotResiduals(residuals, k)
+function plotResiduals(residuals)
 
   nCalls = length(residuals)
-  p = plot(0:(nCalls-1), residuals, yaxis=:log, label="k=" * string(k), shape=:auto, xlabel="iteration", ylabel="residual norm")
+  p = plot(0:(nCalls-1), residuals, yaxis=:log, label="", xlabel="iteration", ylabel="residual norm", linecolor=:black, marker=(:circle, 4, :white, stroke(1.5, :black)),fontfamily="Computer Modern", linewidth=1, framestyle=:box, grid=false )
   return p
 end
 
