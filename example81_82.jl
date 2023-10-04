@@ -20,7 +20,7 @@ runConvergence = true
 # problem definition
 paramProblem = Dict(
     :nx => 12,                  # number of elements in x
-    :ny => 4,                   # number of elements in x
+    :ny => 4,                   # number of elements in y
     :hRefinement => 0:4,        # refinement steps starting from nx, ny
     :order => 1,                # element order 
     :artDiff => ~true,          # use artificial diffusion 

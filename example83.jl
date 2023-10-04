@@ -12,7 +12,7 @@ resultFolder = "./results/example83/"
 # problem definition
 paramProblem = Dict(
     :nx => 100,                 # number of elements in x
-    :ny => 32,                  # number of elements in x
+    :ny => 32,                  # number of elements in y
     :hRefinement => 0,          # refinement steps starting from nx, ny
     :order => 1,                # element order 
     :artDiff => ~true,          # use artificial diffusion 
