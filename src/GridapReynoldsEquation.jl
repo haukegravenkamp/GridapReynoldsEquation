@@ -19,11 +19,14 @@ function domainDefinition(nx, ny, resultFolder)
   partition = (nx, ny)
   model = CartesianDiscreteModel(domain, partition)
 
+  # read number of elements (here just nx*ny)
+  nCells = length(model.grid.cell_type)
+
   # write mesh for paraview
   filePathModel = resultFolder * "model"
   writevtk(model, filePathModel)
 
-  return domain, model, partition, hMin, hMax
+  return domain, model, partition, hMin, hMax, nCells
 end
 
 ## FE SPACES
@@ -329,11 +332,14 @@ function runReynolds(paramProblem, paramSolver, resultFolder)
   ny = paramProblem[:ny]
   order = paramProblem[:order]
   ub = paramProblem[:ub]
-  domain, model, partition, hMin, hMax = domainDefinition(nx, ny, resultFolder)
-  U, V, X, Y, Ωₕ, dΩ = getFeSpaces(model, order, ub)
-  uₕ, solverCache, residualNorms = ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
+  tCPU = @elapsed begin
+    domain, model, partition, hMin, hMax, nCells = domainDefinition(nx, ny, resultFolder)
+    U, V, X, Y, Ωₕ, dΩ = getFeSpaces(model, order, ub)
+    uₕ, solverCache, residualNorms = ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
+  end
+  println("finished run with $(nCells) elements in $(round(tCPU;digits = 2)) s")
   ReynoldsWrite(uₕ, Ωₕ, resultFolder)
-  return uₕ, dΩ, hMin, hMax, solverCache, residualNorms
+  return uₕ, dΩ, hMin, hMax, solverCache, residualNorms, tCPU, nCells
 
 end
 
@@ -374,10 +380,9 @@ function convTest(paramProblem, paramSolver, resultFolder)
     # element numbers 
     paramProblem[:ny] = ny0 * 2^n
     paramProblem[:nx] = nx0 * 2^n
+
     # call main file and time complete computation using @elapsed macro
-    t = @elapsed begin
-      uₕ, dΩ, hMin, hMax, sC, residualNorms = runReynolds(paramProblem, paramSolver, resultFolder)
-    end
+    uₕ, dΩ, hMin, hMax, sC, residualNorms, tCPU, nCells = runReynolds(paramProblem, paramSolver, resultFolder)
 
     # compute L2 norm
     el2 = computeError(u, uₕ, dΩ)
@@ -385,8 +390,8 @@ function convTest(paramProblem, paramSolver, resultFolder)
     # append results of current refinement step
     push!(el2s, el2)
     push!(hs, hMax)
-    push!(nEle, paramProblem[:nx] * paramProblem[:ny])
-    push!(ts, t)
+    push!(nEle, nCells)
+    push!(ts, tCPU)
     push!(solverCache, sC)
     push!(residuals, residualNorms)
 
