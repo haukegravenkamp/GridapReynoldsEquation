@@ -62,8 +62,8 @@ if runConvergence       # perform convergence test
 else                    # only compute base mesh
     uₕ, dΩ, hMin, h, solverCache, residuals = runReynolds(paramProblem, paramSolver, resultFolder)
     # plot residual 
-    pR = plotResiduals(residuals, paramProblem[:order])
-    display(plot(pR))
+    pR = plotResiduals(residuals)
+    display(plot(pR, size=(600,600/1.618)))
     # compute error
     el2 = computeError(u, uₕ, dΩ)
     println("L2 error: ", el2)
