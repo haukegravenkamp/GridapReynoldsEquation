@@ -11,13 +11,11 @@ Also, the shock-capturing approach described in the paper has not yet been inclu
 I closely followed the Gridap tutorials at [github.com/gridap/Tutorials](https://github.com/gridap/Tutorials) to implement this application. They are great if you want to get started using Gridap.
 
 ## content
-The module consists of only one file: 
-- 'GridapReynoldsEquation.jl' contains the definition of the partial differential equation, domain, finite-element spaces, as well as functions for plotting and performing a convergence test.
-  
-The other files are related to the specific numerical examples as presented in the paper:
-
+- 'GridapReynoldsEquation.jl': main file of the module
+- 'Reynolds_functions.jl': contains basically all functions defining the problem, the definition of the partial differential equation, domain, finite-element spaces, as well as functions for plotting and performing a convergence test.
+- 'testRuns*.jl': needed for precompilation using PrecompileTools. 
+- 'ReynoldsExampleLoads.jl': defines loads, analytical solutions, boundary conditions, initial conditions for the three examples as in the paper. The loads have been computed using the Matlab program *Manufactured solutions* [3].
 - 'example*.jl' are the input files and main scripts to run in order to reproduce the examples
-- 'manufacturedSolutionsMatlab' contains the functions defining body loads. They have been computed using the Matlab program *Manufactured solutions* [3]
 - 'results' contains the 'state' files for plotting the results in Paraview (optional).
 
 ## prerequisites
@@ -40,7 +38,9 @@ Details for those new to Julia:
 
 Instead of using the terminal for everything, you may want to use an environment such as VScode with the Julia extension, allowing you to run the example with a click.
 
-Running the code for the first time takes significantly longer due to compilation, which is normal behavior in Julia. The second time takes about 20 seconds on my desktop computer to run the complete convergence test for examples 1 or 2.  
+Running the code for the first time takes significantly longer due to compilation, which is normal behavior in Julia. The second time takes a few seconds on my desktop computer to run the complete convergence test for examples 1 or 2.  
+
+**note:** With the update on 2023/10/10, PrecompileTools are used for efficiency. This results in rather long compilation times when running the code for the very first time. A compiled version of the module's functions is stored during this process so that the startup and compilation times are drastically reduced for any future uses. Should you encounter any problems with this procedure, you may use a previous commit (e.g. f4809aa16afc626c6ebe800161b9740a4b4ef334), which is fully functional but requires some extra compilation time after every restart or even change in the input file. 
 
 **plotting results**
 The meshes and results are written in .vtu format in the subfolders of the 'results' folder. They can easily be plotted using Paraview. If you like, you can use the "state" files (.pvsm) provided in the results folder. 
