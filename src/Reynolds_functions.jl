@@ -20,12 +20,11 @@ function domainDefinition(nx, ny, resultFolder)
   return domain, model, partition, hMin, hMax, nCells
 end
 
-
 ## FE SPACES
-function getFeSpaces(model, order, ub)
+function getFeSpaces(model, pₑ, ub)
 
   # space for u
-  reffe = ReferenceFE(lagrangian, Float64, order)
+  reffe = ReferenceFE(lagrangian, Float64, pₑ)
   V = TestFESpace(model, reffe, conformity=:H1, dirichlet_tags="boundary")
 
   # trial space with Dirichlet value for solution
@@ -40,7 +39,7 @@ function getFeSpaces(model, order, ub)
   # mesh 
   Ωₕ = Triangulation(model)
   # integration rule
-  dΩ = Measure(Ωₕ, 2 * order)
+  dΩ = Measure(Ωₕ, 2 * pₑ)
 
   return U, V, X, Y, Ωₕ, dΩ
 end
@@ -60,6 +59,7 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   f = paramProblem[:f]
   u₀ = paramProblem[:u₀]
   γ = paramProblem[:γ]
+  pₑ = paramProblem[:order]
 
   # read solver parameters
   if isNL
@@ -124,7 +124,7 @@ function ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
   s(u, ∇u, H, Hₓ) = dg(u) ⋅ dx(∇u) ⋅ H + (g(u) - 1) ⋅ Hₓ
 
   # stabilization parameter, Eq. (22)
-  τ(u, ∇u, H, Hₓ) = (4 / hMin^2 * abs(k(u, H)) + 2 / hMin * abs(ax(u, H)) + abs(s(u, ∇u, H, Hₓ)))^(-1)
+  τ(u, ∇u, H, Hₓ) = (4 *pₑ^4/ hMin^2 * abs(k(u, H)) + 2*pₑ/ hMin * abs(ax(u, H)) + abs(s(u, ∇u, H, Hₓ)))^(-1)
 
   ## FUNCTIONS DEFINING WEAK FORM
   # preceeding 'd' indicated their contribution to the Jacobian as in dC
@@ -323,11 +323,11 @@ function runReynolds(paramProblem, paramSolver, resultFolder)
   # this is the main file to call, unless an automatic convergence test is done
     nx = paramProblem[:nx]
     ny = paramProblem[:ny]
-    order = paramProblem[:order]
+    pₑ = paramProblem[:order]
     ub = paramProblem[:ub]
     tCPU = @elapsed begin
       domain, model, partition, hMin, hMax, nCells = domainDefinition(nx, ny, resultFolder)
-      U, V, X, Y, Ωₕ, dΩ = getFeSpaces(model, order, ub)
+      U, V, X, Y, Ωₕ, dΩ = getFeSpaces(model, pₑ, ub)
       uₕ, solverCache, residualNorms = ReynoldsSolve(U, V, X, Y, paramProblem, dΩ, hMin, paramSolver)
     end
     println("finished run with $(nCells) elements in $(round(tCPU;digits = 2)) s")
