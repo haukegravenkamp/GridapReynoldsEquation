@@ -1,3 +1,5 @@
 /.vscode
 *.vtu
 *.pvsm
+*.m
+manufacturedSolutionsMatlab/plotManufacturedSolution.jl

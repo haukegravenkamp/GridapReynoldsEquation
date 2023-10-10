@@ -55,3 +55,9 @@ Load them using File->load state, choose 'Search files under specified directory
 
 [3] Gravenkamp, H., Manufactured solutions (2023). doi:10.5281/zenodo.8315789.
 20
+
+
+## cite as
+Gravenkamp, H., GridapReynoldsEquation, 2023, doi:10.5281/zenodo.8407785
+
+[![DOI](https://zenodo.org/badge/698387866.svg)](https://zenodo.org/badge/latestdoi/698387866)
