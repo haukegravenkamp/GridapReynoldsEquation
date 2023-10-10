@@ -42,7 +42,8 @@ paramSolver = Dict(
     :numIt => 50,               # max number of iterations
     :linType => 1,              # linearization type; 0: Picard, 1: Newton 
     :initialPicard => 4,        # in case of Newton, do this many Picard iterations first, then switch
-    :backTracking => true       # use backtracking (only in case of Newton)
+    :backTracking => true,      # use backtracking (only in case of Newton)
+    :showTrace => true          # show solver output
 )
 
 # solve using Reynolds module
