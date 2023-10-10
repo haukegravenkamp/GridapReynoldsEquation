@@ -3,6 +3,8 @@ export domainDefinition, ReynoldsWrite, getFeSpaces, ReynoldsSolve, runReynolds,
 using Gridap
 using LineSearches: BackTracking
 using Plots
+include("ReynoldsExampleLoads.jl")
+
 
 # TODO: shock capturing
 # TODO: defaults for optional arguments

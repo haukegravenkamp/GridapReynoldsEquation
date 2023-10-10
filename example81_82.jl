@@ -4,15 +4,15 @@ using GridapReynoldsEquation    # use Reynolds module
 using Gridap                    # the FE packages Gridap           
 using Plots                     # for plotting results
 
-
 ## INPUT
 
 # example number as in paper, Section 8.1 or 8.2
 # (example 8.3 is in a different file)
 exampleNo = 1
 
-# read manufactured solution and corresponding body load 
-include("loadExamples1and2.jl")
+# read manufactured solution and corresponding body load, 
+# as well as the name of the folder for storing the results
+u, f, resultFolder, ub, u₀ = selectExample(exampleNo)
 
 # whether to run convergence test or only one mesh
 runConvergence = true
@@ -23,16 +23,16 @@ paramProblem = Dict(
     :ny => 4,                   # number of elements in y
     :hRefinement => 0:4,        # refinement steps starting from nx, ny
     :order => 1,                # element order 
-    :artDiff => ~true,          # use artificial diffusion 
+    :artDiff => false,          # use artificial diffusion 
     :stabilizationType => 2,    # 0: no stabilization, 1: ASGS, 2: OSGS
     :K => 1.0,                  # extra factor for artificial diffusion
     :ζ => 0.5,                  # constants ζ, xₐ in gap function, Eq. (2)
     :xₐ => π,
     :u̅ => 0.98,                 # parameter in regularization, Eq. (3)
     :u => u,                    # analytical solution 
-    :ub => x -> 0.0,            # boundary condition, function of x
+    :ub => ub,                  # boundary condition, function of x
     :f => f,                    # body load as read from file 
-    :u₀ => x -> 1.0,            # initial guess, function of x
+    :u₀ => u₀,                  # initial guess, function of x
     :isNL => true,              # whether problem is nonlinear 
     :γ => 5                     # slenderness ratio (only used in linear problem)
 )
@@ -46,7 +46,7 @@ paramSolver = Dict(
 )
 
 # solve using Reynolds module
-if runConvergence       # perform convergence test
+if runConvergence               # perform convergence test
     el2, h, nEle, t, solverCache, residuals = convTest(paramProblem, paramSolver, resultFolder)
     # plot residual of finest mesh
     pR = plotResiduals(residuals[end])
@@ -59,7 +59,7 @@ if runConvergence       # perform convergence test
         println("convergence rate: ", sl)
     end
 
-else                    # only compute base mesh
+else                            # only compute base mesh
     uₕ, dΩ, hMin, h, solverCache, residuals = runReynolds(paramProblem, paramSolver, resultFolder)
     # plot residual 
     pR = plotResiduals(residuals)

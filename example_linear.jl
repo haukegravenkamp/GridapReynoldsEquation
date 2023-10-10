@@ -36,13 +36,5 @@ paramProblem = Dict(
     :γ => 5                     # slenderness ratio (only used in linear problem)
 )
 
-# solver parameters
-# paramSolver = Dict(
-#     :numIt => 50,               # max number of iterations
-#     :linType => 1,              # linearization type; 0: Picard, 1: Newton 
-#     :initialPicard => 4,        # in case of Newton, do this many Picard iterations first, then switch
-#     :backTracking => true       # use backtracking (only in case of Newton)
-# )
-
 # solve problem using Reynolds module
 uh, dΩ, hMin, h, solverCache, residuals = runReynolds(paramProblem, 0, resultFolder);
