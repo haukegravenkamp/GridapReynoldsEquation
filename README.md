@@ -58,6 +58,6 @@ Load them using File->load state, choose 'Search files under specified directory
 
 
 ## cite as
-Gravenkamp, H., GridapReynoldsEquation, 2023, doi:10.5281/zenodo.8407785
+Gravenkamp, H., Gridap Reynolds Equation, 2023, doi:10.5281/zenodo.8407785
 
 [![DOI](https://zenodo.org/badge/698387866.svg)](https://zenodo.org/badge/latestdoi/698387866)
